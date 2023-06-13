@@ -1,11 +1,13 @@
+import { IMovie } from '../types/IMovie';
+
 interface NumResultsProps {
-  moviesLen: number;
+  movies: IMovie[];
 }
 
-function NumResults({ moviesLen }: NumResultsProps) {
+function NumResults({ movies }: NumResultsProps) {
   return (
     <p className="num-results">
-      Found <strong>{moviesLen}</strong> results
+      Found <strong>{movies.length}</strong> results
     </p>
   );
 }

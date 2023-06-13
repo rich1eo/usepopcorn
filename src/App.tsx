@@ -1,9 +1,15 @@
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { IMovie } from './types/IMovie';
 import { IWatchedData } from './types/IWatchedData';
 import NavBar from './components/NavBar';
 import ListBox from './components/ListBox';
-import WatchedBox from './components/WatchedBox';
+import Logo from './UI/Logo';
+import Search from './UI/Search';
+import NumResults from './UI/NumResults';
+import MovieList from './components/MovieList';
+import WatchedSummary from './components/WatchedSummary';
+import WatchedList from './components/WatchedList';
+import StarRating from './components/StarRating';
 
 const tempMovieData: IMovie[] = [
   {
@@ -53,34 +59,48 @@ const tempWatchedData: IWatchedData[] = [
 ];
 
 interface MainProps {
-  movies: IMovie[];
+  children: React.ReactNode;
 }
 
-function Main({ movies }: MainProps) {
-  return (
-    <main className="main">
-      <ListBox movies={movies} />
-      <WatchedBox tempWatchedData={tempWatchedData} />
-    </main>
-  );
+function Main({ children }: MainProps) {
+  return <main className="main">{children}</main>;
 }
 
 export default function App() {
-  const [query, setQuery] = useState<string>('');
   const [movies, setMovies] = useState<IMovie[]>(tempMovieData);
+  const [watchedMovies, setWatchedMovies] =
+    useState<IWatchedData[]>(tempWatchedData);
+  const [query, setQuery] = useState<string>('');
 
-  function handleSetQuery(value: string) {
-    setQuery(value);
+  function handleSetQuery(event: ChangeEvent<HTMLInputElement>) {
+    setQuery(event.target.value);
   }
 
   return (
     <>
-      <NavBar
-        moviesLen={movies.length}
-        query={query}
-        onHandleQuery={handleSetQuery}
+      <StarRating
+        maxRating={5}
+        messages={['Terrible', 'Bad', 'Okey', 'Good', 'Amazing']}
+        defaultRating={3}
       />
-      <Main movies={movies} />
+      <NavBar>
+        <Logo />
+        <Search
+          value={query}
+          onChange={handleSetQuery}
+          placeholder="Search movies..."
+        />
+        <NumResults movies={movies} />
+      </NavBar>
+      <Main>
+        <ListBox>
+          <MovieList movies={movies} />
+        </ListBox>
+        <ListBox>
+          <WatchedSummary watched={watchedMovies} />
+          <WatchedList watched={watchedMovies} />
+        </ListBox>
+      </Main>
     </>
   );
 }

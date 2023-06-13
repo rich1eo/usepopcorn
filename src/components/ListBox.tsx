@@ -1,21 +1,19 @@
 import { useState } from 'react';
 import ButtonToggle from '../UI/ButtonToggle';
-import { IMovie } from '../types/IMovie';
-import MovieList from './MovieList';
 
 interface ListBoxProps {
-  movies: IMovie[];
+  children: React.ReactNode;
 }
 
-function ListBox({ movies }: ListBoxProps) {
-  const [isOpen1, setIsOpen1] = useState<boolean>(true);
+function ListBox({ children }: ListBoxProps) {
+  const [isOpen, setIsOpen] = useState<boolean>(true);
 
   return (
     <div className="box">
-      <ButtonToggle onClick={() => setIsOpen1(open => !open)}>
-        {isOpen1 ? '–' : '+'}
+      <ButtonToggle onClick={() => setIsOpen(open => !open)}>
+        {isOpen ? '–' : '+'}
       </ButtonToggle>
-      {isOpen1 && <MovieList movies={movies} />}
+      {isOpen && children}
     </div>
   );
 }
