@@ -31,7 +31,7 @@ interface IRating {
   Value: string;
 }
 
-export interface IWatchedData {
+export interface IWatchedMovie {
   imdbID: string;
   Title: string;
   Year: string;

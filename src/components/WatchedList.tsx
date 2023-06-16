@@ -1,15 +1,20 @@
-import { IWatchedData } from '../types/types';
+import { IWatchedMovie } from '../types/types';
 import WatchedListItem from './WatchedListItem';
 
 interface WatchedListProps {
-  watched: IWatchedData[];
+  watched: IWatchedMovie[];
+  onDeleteWatched(id: string): void;
 }
 
-function WatchedList({ watched }: WatchedListProps) {
+function WatchedList({ watched, onDeleteWatched }: WatchedListProps) {
   return (
     <ul className="list">
       {watched.map(movie => (
-        <WatchedListItem key={movie.imdbID} movie={movie} />
+        <WatchedListItem
+          key={movie.imdbID}
+          movie={movie}
+          onDeleteWatched={onDeleteWatched}
+        />
       ))}
     </ul>
   );

@@ -1,6 +1,5 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { IMovie } from './types/types';
-import { IWatchedData } from './types/types';
+import { IMovie, IWatchedMovie } from './types/types';
 import { fetchMovies } from './utils/utils';
 import NavBar from './components/NavBar';
 import ListBox from './components/ListBox';
@@ -13,18 +12,11 @@ import WatchedList from './components/WatchedList';
 import Loader from './components/Loader';
 import ErrorMessage from './components/ErrorMessage';
 import MovieDetails from './components/MovieDetails';
-
-interface MainProps {
-  children: React.ReactNode;
-}
-
-function Main({ children }: MainProps) {
-  return <main className="main">{children}</main>;
-}
+import Main from './components/Main';
 
 export default function App() {
   const [movies, setMovies] = useState<IMovie[]>([]);
-  const [watchedMovies, setWatchedMovies] = useState<IWatchedData[]>([]);
+  const [watchedMovies, setWatchedMovies] = useState<IWatchedMovie[]>([]);
   const [selectedId, setSelectedId] = useState<string>('');
   const [query, setQuery] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -67,6 +59,20 @@ export default function App() {
     setSelectedId('');
   }
 
+  function handleAddWatchedMovie(movie: IWatchedMovie) {
+    const isDuplicate = watchedMovies.find(
+      watchedMovie => watchedMovie.imdbID === movie.imdbID
+    );
+    if (isDuplicate) return;
+    setWatchedMovies(watchedMovies => [movie, ...watchedMovies]);
+  }
+
+  function handleDeleteWatched(id: string) {
+    setWatchedMovies(watchedMovies =>
+      watchedMovies.filter(watchedMovie => watchedMovie.imdbID !== id)
+    );
+  }
+
   function handleSetQuery(event: ChangeEvent<HTMLInputElement>) {
     setQuery(event.target.value);
   }
@@ -95,11 +101,16 @@ export default function App() {
             <MovieDetails
               selectedId={selectedId}
               onCloseMovie={handleCloseMovie}
+              onAddWatched={handleAddWatchedMovie}
+              watchedMovies={watchedMovies}
             />
           ) : (
             <>
               <WatchedSummary watched={watchedMovies} />
-              <WatchedList watched={watchedMovies} />
+              <WatchedList
+                watched={watchedMovies}
+                onDeleteWatched={handleDeleteWatched}
+              />
             </>
           )}
         </ListBox>
