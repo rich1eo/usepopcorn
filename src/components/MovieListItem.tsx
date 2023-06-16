@@ -1,12 +1,17 @@
-import { IMovie } from '../types/IMovie';
+import { IMovie } from '../types/types';
 
 interface MovieListItemProps {
   movie: IMovie;
+  onSelectMovie(id: string): void;
 }
 
-function MovieListItem({ movie }: MovieListItemProps) {
+function MovieListItem({ movie, onSelectMovie }: MovieListItemProps) {
+  function handleSelectMovie() {
+    onSelectMovie(movie.imdbID);
+  }
+
   return (
-    <li>
+    <li onClick={handleSelectMovie}>
       <img src={movie.Poster} alt={`${movie.Title} poster`} />
       <h3>{movie.Title}</h3>
       <div>
