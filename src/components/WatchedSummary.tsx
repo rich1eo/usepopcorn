@@ -1,10 +1,10 @@
-import { IWatchedData } from '../types/types';
+import { IWatchedMovie } from '../types/types';
 
 const average = (arr: number[]) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 interface WatchedSummaryProps {
-  watched: IWatchedData[];
+  watched: IWatchedMovie[];
 }
 
 function WatchedSummary({ watched }: WatchedSummaryProps) {
@@ -22,11 +22,11 @@ function WatchedSummary({ watched }: WatchedSummaryProps) {
         </p>
         <p>
           <span>⭐️</span>
-          <span>{avgImdbRating}</span>
+          <span>{avgImdbRating.toFixed(2)}</span>
         </p>
         <p>
           <span>🌟</span>
-          <span>{avgUserRating}</span>
+          <span>{avgUserRating.toFixed(2)}</span>
         </p>
         <p>
           <span>⏳</span>

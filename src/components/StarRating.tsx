@@ -52,7 +52,7 @@ function StarRating({
           <span key={i}>
             <Star
               full={tempRating ? tempRating >= i + 1 : rating >= i + 1}
-              onRate={() => handleRating.bind(null, i + 1)}
+              onRate={handleRating.bind(null, i + 1)}
               onHoverIn={() => {
                 setTempRating(i + 1);
               }}

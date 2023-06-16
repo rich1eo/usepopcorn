@@ -1,16 +1,32 @@
 import { useEffect, useState } from 'react';
-import { IMovieDetails } from '../types/types';
+import { IMovieDetails, IWatchedMovie } from '../types/types';
 import Loader from './Loader';
 import StarRating from './StarRating';
 
 interface MovieDetailsProps {
   selectedId: string;
+  watchedMovies: IWatchedMovie[];
   onCloseMovie(): void;
+  onAddWatched(movie: IWatchedMovie): void;
 }
 
-function MovieDetails({ selectedId, onCloseMovie }: MovieDetailsProps) {
+function MovieDetails({
+  selectedId,
+  watchedMovies,
+  onCloseMovie,
+  onAddWatched,
+}: MovieDetailsProps) {
   const [movie, setMovie] = useState<IMovieDetails | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [userRating, setUserRating] = useState<number>(0);
+
+  const isWatched = watchedMovies
+    .map(watchedMovies => watchedMovies.imdbID)
+    .includes(selectedId);
+
+  const watchedRating = watchedMovies.find(
+    watchedMovie => watchedMovie.imdbID === selectedId
+  )?.userRating;
 
   useEffect(() => {
     async function getMovieDetails() {
@@ -24,6 +40,27 @@ function MovieDetails({ selectedId, onCloseMovie }: MovieDetailsProps) {
     }
     getMovieDetails();
   }, [selectedId]);
+
+  function handleAddToWatched() {
+    if (!movie) return;
+
+    const newWatchedMovie: IWatchedMovie = {
+      imdbID: movie.imdbID,
+      Poster: movie.Poster,
+      imdbRating: +movie.imdbRating,
+      runtime: Number(movie.Runtime.split(' ').at(0)),
+      Title: movie.Title,
+      userRating: userRating,
+      Year: movie.Year,
+    };
+
+    onAddWatched(newWatchedMovie);
+    onCloseMovie();
+  }
+
+  function handleUserRating(rating: number) {
+    setUserRating(rating);
+  }
 
   if (movie) {
     return (
@@ -51,7 +88,23 @@ function MovieDetails({ selectedId, onCloseMovie }: MovieDetailsProps) {
             </header>
             <section>
               <div className="rating">
-                <StarRating maxRating={10} size={24} />
+                {isWatched ? (
+                  <p>You rated this movie with {watchedRating} stars!</p>
+                ) : (
+                  <>
+                    <StarRating
+                      maxRating={10}
+                      size={24}
+                      defaultRating={userRating}
+                      onSetRating={handleUserRating}
+                    />
+                    {userRating > 0 && (
+                      <button className="btn-add" onClick={handleAddToWatched}>
+                        + Add to list
+                      </button>
+                    )}
+                  </>
+                )}
               </div>
               <p>
                 <em>{movie.Plot}</em>
