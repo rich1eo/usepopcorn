@@ -1,4 +1,4 @@
-import { IMovie } from '../types/IMovie';
+import { IMovie } from '../types/types';
 
 interface NumResultsProps {
   movies: IMovie[];

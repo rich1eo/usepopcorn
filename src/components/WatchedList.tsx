@@ -1,4 +1,4 @@
-import { IWatchedData } from '../types/IWatchedData';
+import { IWatchedData } from '../types/types';
 import WatchedListItem from './WatchedListItem';
 
 interface WatchedListProps {
