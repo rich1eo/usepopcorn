@@ -1,6 +1,5 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { IMovie, IWatchedMovie } from './types/types';
-import { fetchMovies } from './utils/utils';
+import { IAPIResponse, IMovie, IWatchedMovie } from './types/types';
 import NavBar from './components/NavBar';
 import ListBox from './components/ListBox';
 import Logo from './UI/Logo';
@@ -22,20 +21,41 @@ export default function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
+  // TODO: Convert to event handler function
   useEffect(() => {
     if (!query) return;
+
+    const controller = new AbortController();
 
     async function getMovies() {
       try {
         setIsLoading(true);
-        const res = await fetchMovies(
-          `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_API_KEY}&s=${query}`
-        );
-        res && setMovies(res);
         setError('');
+
+        const res = await fetch(
+          `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_API_KEY}&s=${query}`,
+          { signal: controller.signal }
+        );
+
+        if (!res.ok) {
+          throw new Error('Something went wrong during fetching!');
+        }
+
+        const data: IAPIResponse = await res.json();
+
+        if (data.Error) {
+          throw new Error(data.Error);
+        }
+
+        if (data.Search) {
+          setMovies(data.Search);
+          setError('');
+        }
       } catch (err) {
         if (err instanceof Error) {
-          setError(err.message);
+          if (err.name !== 'AbortError') {
+            setError(err.message);
+          }
         }
       } finally {
         setIsLoading(false);
@@ -48,7 +68,12 @@ export default function App() {
       return;
     }
 
+    handleCloseMovie();
     getMovies();
+
+    return () => {
+      controller.abort();
+    };
   }, [query]);
 
   function handleSelectMovie(id: string) {
