@@ -41,6 +41,29 @@ function MovieDetails({
     getMovieDetails();
   }, [selectedId]);
 
+  useEffect(() => {
+    if (!movie) return;
+    document.title = `${movie.Title} | usePopcorn`;
+
+    return () => {
+      document.title = 'usePopcorn';
+    };
+  }, [movie]);
+
+  useEffect(() => {
+    function callback(event: KeyboardEvent) {
+      if (event.code === 'Escape') {
+        onCloseMovie();
+      }
+    }
+
+    document.addEventListener('keydown', callback);
+
+    return () => {
+      document.removeEventListener('keydown', callback);
+    };
+  }, [onCloseMovie]);
+
   function handleAddToWatched() {
     if (!movie) return;
 
