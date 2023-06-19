@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, forwardRef } from 'react';
 
 interface SearchProps {
   value: string;
@@ -6,7 +6,10 @@ interface SearchProps {
   placeholder: string;
 }
 
-function Search({ value, onChange, placeholder }: SearchProps) {
+const Search = forwardRef<HTMLInputElement, SearchProps>(function Search(
+  { value, onChange, placeholder },
+  ref
+) {
   return (
     <input
       className="search"
@@ -14,8 +17,9 @@ function Search({ value, onChange, placeholder }: SearchProps) {
       placeholder={placeholder}
       value={value}
       onChange={onChange}
+      ref={ref}
     />
   );
-}
+});
 
 export default Search;
