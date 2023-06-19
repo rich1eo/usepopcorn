@@ -1,10 +1,13 @@
 # usePopcorn
 Build your personal films/serials library. All new reliases available thanks to IMDB API.
 
+[Live demo](https://usepopcorn-rich1e.netlify.app)
+
 This project is build with:
 - [React](https://react.dev)
 - [TypeScript](https://www.typescriptlang.org)
 - [Create React App](https://github.com/facebook/create-react-app)
+- [Hosted by Netlify](https://www.netlify.com)
 
 ## Local Development
 For local development add `REACT_APP_API_KEY` to `.env` file, for value generate API key [here](https://www.omdbapi.com/apikey.aspx).
