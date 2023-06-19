@@ -1,5 +1,9 @@
-import { ChangeEvent, useEffect, useState } from 'react';
-import { IAPIResponse, IMovie, IWatchedMovie } from './types/types';
+import { ChangeEvent, useRef, useState } from 'react';
+import { IWatchedMovie } from './types/types';
+import { useLocalStorageState } from './hooks/useLocalStorageState';
+import { useKey } from './hooks/useKey';
+import { useMovies } from './hooks/useMovies';
+
 import NavBar from './components/NavBar';
 import ListBox from './components/ListBox';
 import Logo from './UI/Logo';
@@ -14,67 +18,21 @@ import MovieDetails from './components/MovieDetails';
 import Main from './components/Main';
 
 export default function App() {
-  const [movies, setMovies] = useState<IMovie[]>([]);
-  const [watchedMovies, setWatchedMovies] = useState<IWatchedMovie[]>([]);
   const [selectedId, setSelectedId] = useState<string>('');
   const [query, setQuery] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
 
-  // TODO: Convert to event handler function
-  useEffect(() => {
-    if (!query) return;
+  const inputRef = useRef<HTMLInputElement>(null!);
 
-    const controller = new AbortController();
+  const { movies, isLoading, error } = useMovies(query);
+  const [watchedMovies, setWatchedMovies] = useLocalStorageState<
+    IWatchedMovie[]
+  >([], 'watched');
 
-    async function getMovies() {
-      try {
-        setIsLoading(true);
-        setError('');
-
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_API_KEY}&s=${query}`,
-          { signal: controller.signal }
-        );
-
-        if (!res.ok) {
-          throw new Error('Something went wrong during fetching!');
-        }
-
-        const data: IAPIResponse = await res.json();
-
-        if (data.Error) {
-          throw new Error(data.Error);
-        }
-
-        if (data.Search) {
-          setMovies(data.Search);
-          setError('');
-        }
-      } catch (err) {
-        if (err instanceof Error) {
-          if (err.name !== 'AbortError') {
-            setError(err.message);
-          }
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    if (query.length < 3) {
-      setMovies([]);
-      setError('');
-      return;
-    }
-
-    handleCloseMovie();
-    getMovies();
-
-    return () => {
-      controller.abort();
-    };
-  }, [query]);
+  useKey('Enter', () => {
+    if (document.activeElement === inputRef.current) return;
+    setQuery('');
+    inputRef.current.focus();
+  });
 
   function handleSelectMovie(id: string) {
     setSelectedId(selectedId => (id === selectedId ? '' : id));
@@ -110,6 +68,7 @@ export default function App() {
           value={query}
           onChange={handleSetQuery}
           placeholder="Search movies..."
+          ref={inputRef}
         />
         <NumResults movies={movies} />
       </NavBar>
