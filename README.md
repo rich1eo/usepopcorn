@@ -1,6 +1,13 @@
-# Getting Started with Create React App
+# usePopcorn
+Build your personal films/serials library. All new reliases available thanks to IMDB API.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was build with:
+- [React](https://react.dev)
+- [TypeScript](https://www.typescriptlang.org)
+- [Create React App](https://github.com/facebook/create-react-app)
+
+## Local Development
+For local development add `REACT_APP_API_KEY` to `.env` file, for value generate API key [here](https://www.omdbapi.com/apikey.aspx).
 
 ## Available Scripts
 
